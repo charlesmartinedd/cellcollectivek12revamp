@@ -12,7 +12,7 @@ import {
   selectComponent,
 } from '../../store/slices/editorSlice'
 
-const ComponentNode = ({ component }) => {
+const ComponentNode = ({ component, isConnectMode, isConnecting, onComponentClick }) => {
   const dispatch = useDispatch()
   const { selectedComponent } = useSelector((state) => state.editor)
   const nodeRef = useRef(null)
@@ -50,7 +50,11 @@ const ComponentNode = ({ component }) => {
 
   const handleClick = (e) => {
     e.stopPropagation()
-    dispatch(selectComponent(component))
+    if (isConnectMode && onComponentClick) {
+      onComponentClick(component)
+    } else {
+      dispatch(selectComponent(component))
+    }
   }
 
   const handleToggleState = (e) => {
@@ -72,22 +76,26 @@ const ComponentNode = ({ component }) => {
     <Paper
       ref={nodeRef}
       onClick={handleClick}
-      elevation={isSelected ? 8 : 2}
+      elevation={isSelected || isConnecting ? 8 : 2}
       sx={{
         position: 'absolute',
         left: component.position.x,
         top: component.position.y,
         width: component.width,
         minHeight: component.height,
-        cursor: 'move',
+        cursor: isConnectMode ? 'pointer' : 'move',
         opacity: isDragging ? 0.5 : 1,
-        border: isSelected ? `3px solid ${component.color}` : `2px solid ${component.color}`,
+        border: isConnecting
+          ? `4px solid #FF9800`
+          : isSelected
+          ? `3px solid ${component.color}`
+          : `2px solid ${component.color}`,
         borderRadius: 2,
         backgroundColor: component.state ? `${component.color}20` : '#fff',
         transition: 'all 0.2s',
         '&:hover': {
           boxShadow: 6,
-          transform: 'scale(1.05)',
+          transform: isConnectMode ? 'scale(1.1)' : 'scale(1.05)',
         },
       }}
     >

@@ -1,0 +1,256 @@
+{
+  "id": "photosynthesis-v1",
+  "name": "Photosynthesis Model",
+  "description": "A simplified model showing how plants convert sunlight, water, and carbon dioxide into glucose and oxygen. This model demonstrates the light-dependent and light-independent reactions of photosynthesis.",
+  "grade": "6-8",
+  "difficulty": "beginner",
+  "learningObjectives": [
+    "Understand the inputs and outputs of photosynthesis",
+    "Learn how sunlight drives the photosynthesis process",
+    "Observe how different components activate and inhibit each other",
+    "See the cyclical nature of biological processes"
+  ],
+  "components": [
+    {
+      "id": "sunlight",
+      "type": "signal",
+      "name": "Sunlight",
+      "description": "Light energy from the sun that drives photosynthesis",
+      "category": "Signals",
+      "color": "#FFD700",
+      "position": { "x": 100, "y": 100 },
+      "state": true,
+      "width": 120,
+      "height": 80
+    },
+    {
+      "id": "water",
+      "type": "molecule",
+      "name": "Water (H₂O)",
+      "description": "Water absorbed by plant roots",
+      "category": "Molecules",
+      "color": "#2196F3",
+      "position": { "x": 100, "y": 220 },
+      "state": true,
+      "width": 120,
+      "height": 80
+    },
+    {
+      "id": "co2",
+      "type": "molecule",
+      "name": "Carbon Dioxide",
+      "description": "CO₂ absorbed from the air through stomata",
+      "category": "Molecules",
+      "color": "#9E9E9E",
+      "position": { "x": 100, "y": 340 },
+      "state": true,
+      "width": 120,
+      "height": 80
+    },
+    {
+      "id": "chlorophyll",
+      "type": "protein",
+      "name": "Chlorophyll",
+      "description": "Green pigment that captures light energy",
+      "category": "Proteins",
+      "color": "#4CAF50",
+      "position": { "x": 300, "y": 100 },
+      "state": false,
+      "width": 120,
+      "height": 80
+    },
+    {
+      "id": "light-reactions",
+      "type": "protein",
+      "name": "Light Reactions",
+      "description": "Process that converts light energy to chemical energy (ATP and NADPH)",
+      "category": "Proteins",
+      "color": "#FF9800",
+      "position": { "x": 500, "y": 100 },
+      "state": false,
+      "width": 120,
+      "height": 80
+    },
+    {
+      "id": "atp",
+      "type": "molecule",
+      "name": "ATP",
+      "description": "Energy currency of the cell",
+      "category": "Molecules",
+      "color": "#E91E63",
+      "position": { "x": 700, "y": 100 },
+      "state": false,
+      "width": 120,
+      "height": 80
+    },
+    {
+      "id": "nadph",
+      "type": "molecule",
+      "name": "NADPH",
+      "description": "Electron carrier that stores energy",
+      "category": "Molecules",
+      "color": "#9C27B0",
+      "position": { "x": 700, "y": 220 },
+      "state": false,
+      "width": 120,
+      "height": 80
+    },
+    {
+      "id": "calvin-cycle",
+      "type": "protein",
+      "name": "Calvin Cycle",
+      "description": "Process that uses ATP and NADPH to convert CO₂ into glucose",
+      "category": "Proteins",
+      "color": "#00BCD4",
+      "position": { "x": 500, "y": 340 },
+      "state": false,
+      "width": 120,
+      "height": 80
+    },
+    {
+      "id": "glucose",
+      "type": "molecule",
+      "name": "Glucose (C₆H₁₂O₆)",
+      "description": "Sugar produced by photosynthesis - plant food!",
+      "category": "Molecules",
+      "color": "#8BC34A",
+      "position": { "x": 300, "y": 340 },
+      "state": false,
+      "width": 120,
+      "height": 80
+    },
+    {
+      "id": "oxygen",
+      "type": "molecule",
+      "name": "Oxygen (O₂)",
+      "description": "Byproduct of photosynthesis released into the air",
+      "category": "Molecules",
+      "color": "#03A9F4",
+      "position": { "x": 300, "y": 220 },
+      "state": false,
+      "width": 120,
+      "height": 80
+    }
+  ],
+  "connections": [
+    {
+      "id": "conn-1",
+      "source": "sunlight",
+      "target": "chlorophyll",
+      "type": "activation",
+      "description": "Sunlight activates chlorophyll"
+    },
+    {
+      "id": "conn-2",
+      "source": "chlorophyll",
+      "target": "light-reactions",
+      "type": "activation",
+      "description": "Activated chlorophyll drives light reactions"
+    },
+    {
+      "id": "conn-3",
+      "source": "water",
+      "target": "light-reactions",
+      "type": "activation",
+      "description": "Water is split during light reactions"
+    },
+    {
+      "id": "conn-4",
+      "source": "light-reactions",
+      "target": "atp",
+      "type": "activation",
+      "description": "Light reactions produce ATP"
+    },
+    {
+      "id": "conn-5",
+      "source": "light-reactions",
+      "target": "nadph",
+      "type": "activation",
+      "description": "Light reactions produce NADPH"
+    },
+    {
+      "id": "conn-6",
+      "source": "light-reactions",
+      "target": "oxygen",
+      "type": "activation",
+      "description": "Light reactions release oxygen as a byproduct"
+    },
+    {
+      "id": "conn-7",
+      "source": "atp",
+      "target": "calvin-cycle",
+      "type": "activation",
+      "description": "ATP provides energy for the Calvin Cycle"
+    },
+    {
+      "id": "conn-8",
+      "source": "nadph",
+      "target": "calvin-cycle",
+      "type": "activation",
+      "description": "NADPH provides electrons for the Calvin Cycle"
+    },
+    {
+      "id": "conn-9",
+      "source": "co2",
+      "target": "calvin-cycle",
+      "type": "activation",
+      "description": "CO₂ is fixed in the Calvin Cycle"
+    },
+    {
+      "id": "conn-10",
+      "source": "calvin-cycle",
+      "target": "glucose",
+      "type": "activation",
+      "description": "Calvin Cycle produces glucose"
+    }
+  ],
+  "instructions": [
+    "This model shows the two main stages of photosynthesis:",
+    "1. Light Reactions: Sunlight → ATP + NADPH + O₂",
+    "2. Calvin Cycle: ATP + NADPH + CO₂ → Glucose",
+    "",
+    "Try this:",
+    "• Run the simulation with Sunlight ON to see the cascade effect",
+    "• Turn Sunlight OFF and observe what happens",
+    "• Notice how Oxygen is a byproduct we breathe!",
+    "• See how ATP and NADPH connect the two stages"
+  ],
+  "quiz": [
+    {
+      "question": "What are the three main inputs of photosynthesis?",
+      "options": [
+        "Sunlight, Water, Carbon Dioxide",
+        "Sunlight, Oxygen, Glucose",
+        "Water, ATP, NADPH",
+        "Glucose, Oxygen, Water"
+      ],
+      "correctAnswer": 0
+    },
+    {
+      "question": "What gas is released as a byproduct of photosynthesis?",
+      "options": [
+        "Carbon Dioxide",
+        "Nitrogen",
+        "Oxygen",
+        "Hydrogen"
+      ],
+      "correctAnswer": 2
+    },
+    {
+      "question": "What is the main product (food) that plants make?",
+      "options": [
+        "Water",
+        "Oxygen",
+        "ATP",
+        "Glucose"
+      ],
+      "correctAnswer": 3
+    }
+  ],
+  "teacherNotes": [
+    "This model simplifies photosynthesis for middle school understanding.",
+    "Key concepts: energy transformation, inputs/outputs, cycles",
+    "Students can experiment with turning sunlight on/off to see effects",
+    "Extension: Compare to cellular respiration (reverse process)"
+  ]
+}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   Box,
@@ -8,6 +8,7 @@ import {
   Typography,
   Button,
   Chip,
+  Alert,
 } from '@mui/material'
 import {
   PlayArrow as PlayIcon,
@@ -25,14 +26,26 @@ import {
   resetSimulation,
   setSpeed,
 } from '../../store/slices/simulationSlice'
+import { useSimulation } from '../../hooks/useSimulation'
 
 const SimulationControls = () => {
   const dispatch = useDispatch()
   const { isRunning, isPaused, currentStep, totalSteps, speed } = useSelector(
     (state) => state.simulation
   )
+  const { components, connections } = useSelector((state) => state.editor)
+
+  // Use the simulation hook
+  const { initializeSimulation, runOneStep } = useSimulation()
+
+  const canSimulate = components.length > 0 && connections.length > 0
 
   const handlePlayPause = () => {
+    if (!canSimulate) {
+      alert('Please add components and connections before running simulation')
+      return
+    }
+
     if (!isRunning) {
       dispatch(startSimulation())
     } else if (isPaused) {
@@ -48,6 +61,23 @@ const SimulationControls = () => {
 
   const handleReset = () => {
     dispatch(resetSimulation())
+  }
+
+  const handleStep = () => {
+    if (!canSimulate) {
+      alert('Please add components and connections before running simulation')
+      return
+    }
+
+    if (!isRunning) {
+      // Initialize if first step
+      initializeSimulation()
+      dispatch(startSimulation())
+    }
+    // Run one step manually
+    runOneStep()
+    // Pause so it doesn't continue automatically
+    dispatch(pauseSimulation())
   }
 
   const handleSpeedChange = (event, newValue) => {
@@ -79,6 +109,38 @@ const SimulationControls = () => {
     return 5
   }
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      // Don't trigger if typing in an input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+
+      switch (e.key.toLowerCase()) {
+        case ' ':
+          e.preventDefault()
+          handlePlayPause()
+          break
+        case 'r':
+          e.preventDefault()
+          handleReset()
+          break
+        case 's':
+          e.preventDefault()
+          handleStop()
+          break
+        case 'n':
+          e.preventDefault()
+          handleStep()
+          break
+        default:
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [isRunning, isPaused, canSimulate])
+
   return (
     <Paper
       elevation={4}
@@ -98,11 +160,19 @@ const SimulationControls = () => {
         ⚙️ Simulation Controls
       </Typography>
 
+      {/* Warning if no components/connections */}
+      {!canSimulate && (
+        <Alert severity="warning" sx={{ mb: 2 }}>
+          Please add components and create connections in the Editor before running a simulation.
+        </Alert>
+      )}
+
       <Box sx={{ display: 'flex', gap: 3, alignItems: 'center', flexWrap: 'wrap' }}>
         {/* Main Control Buttons - Large and Clear */}
         <Box sx={{ display: 'flex', gap: 2 }}>
           <IconButton
             onClick={handlePlayPause}
+            disabled={!canSimulate}
             size="large"
             sx={{
               width: 60,
@@ -111,6 +181,10 @@ const SimulationControls = () => {
               color: 'white',
               '&:hover': {
                 backgroundColor: isRunning && !isPaused ? 'warning.dark' : 'success.dark',
+              },
+              '&:disabled': {
+                backgroundColor: '#BDBDBD',
+                color: 'white',
               },
             }}
           >
@@ -152,6 +226,28 @@ const SimulationControls = () => {
             }}
           >
             <ResetIcon fontSize="large" />
+          </IconButton>
+
+          <IconButton
+            onClick={handleStep}
+            disabled={!canSimulate}
+            size="large"
+            sx={{
+              width: 60,
+              height: 60,
+              backgroundColor: 'secondary.main',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: 'secondary.dark',
+              },
+              '&:disabled': {
+                backgroundColor: '#BDBDBD',
+                color: 'white',
+              },
+            }}
+            title="Step forward one frame"
+          >
+            <StepIcon fontSize="large" />
           </IconButton>
         </Box>
 
@@ -232,7 +328,7 @@ const SimulationControls = () => {
       {/* Keyboard Shortcuts Help */}
       <Box sx={{ mt: 2, p: 2, backgroundColor: '#E3F2FD', borderRadius: 2 }}>
         <Typography variant="caption" color="primary.dark">
-          ⌨️ <strong>Keyboard Shortcuts:</strong> Space = Play/Pause | R = Reset | S = Stop
+          ⌨️ <strong>Keyboard Shortcuts:</strong> Space = Play/Pause | R = Reset | S = Stop | N = Next Step
         </Typography>
       </Box>
     </Paper>

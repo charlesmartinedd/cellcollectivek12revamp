@@ -5,26 +5,25 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
 const SimulationGraph = () => {
-  const { graphData, isRunning } = useSelector((state) => state.simulation)
+  const { graphData, isRunning, history } = useSelector((state) => state.simulation)
   const { components } = useSelector((state) => state.editor)
   const chartRef = useRef(null)
   const [viewType, setViewType] = React.useState('line')
 
-  // Generate sample data for demonstration
-  const generateSampleData = () => {
-    if (components.length === 0) return []
+  // Convert simulation history to chart series data
+  const getChartSeriesData = () => {
+    if (components.length === 0 || history.length === 0) {
+      return []
+    }
 
-    // Create time series data for each component
-    return components.slice(0, 5).map((component, index) => ({
+    // Create a series for each component
+    return components.map((component) => ({
       name: component.name,
-      data: Array.from({ length: 50 }, (_, i) => {
-        // Simulate oscillating patterns
-        const base = component.state ? 1 : 0
-        const noise = Math.random() * 0.2
-        const wave = Math.sin((i + index * 10) / 5) * 0.3
-        return Math.max(0, Math.min(1, base + noise + wave))
-      }),
+      data: history.map((entry) => (entry.states[component.id] ? 1 : 0)),
       color: component.color,
+      marker: {
+        symbol: 'circle',
+      },
     }))
   }
 
@@ -115,9 +114,17 @@ const SimulationGraph = () => {
       style: {
         fontSize: '0.875rem',
       },
-      valueDecimals: 2,
+      formatter: function () {
+        let tooltip = `<b>Step ${this.x}</b><br/>`
+        this.points.forEach((point) => {
+          const value = point.y === 1 ? 'ON' : 'OFF'
+          const color = point.series.color
+          tooltip += `<span style="color:${color}">\u25CF</span> ${point.series.name}: <b>${value}</b><br/>`
+        })
+        return tooltip
+      },
     },
-    series: generateSampleData(),
+    series: getChartSeriesData(),
     credits: {
       enabled: false,
     },
@@ -125,6 +132,25 @@ const SimulationGraph = () => {
       enabled: true,
     },
   }
+
+  // Update chart when history changes
+  useEffect(() => {
+    if (chartRef.current && chartRef.current.chart) {
+      const newSeries = getChartSeriesData()
+      const chart = chartRef.current.chart
+
+      // Update series data
+      while (chart.series.length > 0) {
+        chart.series[0].remove(false)
+      }
+
+      newSeries.forEach((series) => {
+        chart.addSeries(series, false)
+      })
+
+      chart.redraw()
+    }
+  }, [history, components])
 
   return (
     <Paper elevation={3} sx={{ p: 3, height: '100%' }}>
