@@ -118,19 +118,38 @@ const SimulationControls = () => {
       switch (e.key.toLowerCase()) {
         case ' ':
           e.preventDefault()
-          handlePlayPause()
+          if (!canSimulate) {
+            alert('Please add components and connections before running simulation')
+            return
+          }
+          if (!isRunning) {
+            dispatch(startSimulation())
+          } else if (isPaused) {
+            dispatch(resumeSimulation())
+          } else {
+            dispatch(pauseSimulation())
+          }
           break
         case 'r':
           e.preventDefault()
-          handleReset()
+          dispatch(resetSimulation())
           break
         case 's':
           e.preventDefault()
-          handleStop()
+          dispatch(stopSimulation())
           break
         case 'n':
           e.preventDefault()
-          handleStep()
+          if (!canSimulate) {
+            alert('Please add components and connections before running simulation')
+            return
+          }
+          if (!isRunning) {
+            initializeSimulation()
+            dispatch(startSimulation())
+          }
+          runOneStep()
+          dispatch(pauseSimulation())
           break
         default:
           break
@@ -139,7 +158,7 @@ const SimulationControls = () => {
 
     window.addEventListener('keydown', handleKeyPress)
     return () => window.removeEventListener('keydown', handleKeyPress)
-  }, [isRunning, isPaused, canSimulate])
+  }, [isRunning, isPaused, canSimulate, dispatch, initializeSimulation, runOneStep])
 
   return (
     <Paper

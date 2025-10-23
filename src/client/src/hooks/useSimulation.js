@@ -80,10 +80,6 @@ export const useSimulation = () => {
       )
     })
 
-    // Add to graph data
-    const graphDataPoint = statesToArray(nextStates, components)
-    dispatch(setGraphData([...history, { step: nextStep, data: graphDataPoint }]))
-
     // Check for steady state
     if (history.length > 0) {
       const previousStates = history[history.length - 1].states

@@ -115,6 +115,15 @@ export function getAvailableModels() {
       thumbnail: '/models/thumbnails/photosynthesis.png',
       tags: ['plants', 'energy', 'biology'],
     },
+    {
+      id: 'simple-feedback-v1',
+      name: 'Simple Feedback Loop',
+      description: 'Basic positive and negative feedback regulation',
+      difficulty: 'beginner',
+      grade: '6-8',
+      thumbnail: '/models/thumbnails/feedback.png',
+      tags: ['regulation', 'homeostasis', 'feedback'],
+    },
     // More models will be added here
   ]
 }

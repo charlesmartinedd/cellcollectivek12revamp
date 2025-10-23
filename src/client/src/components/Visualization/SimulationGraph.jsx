@@ -135,8 +135,17 @@ const SimulationGraph = () => {
 
   // Update chart when history changes
   useEffect(() => {
-    if (chartRef.current && chartRef.current.chart) {
-      const newSeries = getChartSeriesData()
+    if (chartRef.current && chartRef.current.chart && history.length > 0) {
+      // Generate new series data
+      const newSeries = components.map((component) => ({
+        name: component.name,
+        data: history.map((entry) => (entry.states[component.id] ? 1 : 0)),
+        color: component.color,
+        marker: {
+          symbol: 'circle',
+        },
+      }))
+
       const chart = chartRef.current.chart
 
       // Update series data
